@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        span{
+            color: red;
+        }
+        .dazhuanpan{
+            height: 400px;
+            width: 400px;
+            background: url(dazhuanpan.jpg);
+            background-size: contain;
+            border-radius: 50%;
+            transition: all 1s;
+        }
+        
+        .zhen{
+            height:0px;
+            width: 0px;
+            background-color: #ccc;
+            border: 30px solid #fff;
+            border-right: 30px solid #000;
+            position: absolute;
+            z-index: -1;
+            top: 171px;
+            left: 370px;
+        }
+        .choujiang{
+            position: relative;
+            width: 400px;
+            margin: 0 auto;
+        }
+        .btn ,.btn2{
+          background-color: #ee432e;
+          background-image: -webkit-linear-gradient(top, #ee432e 0%, #c63929 50%,#b51700 50%, #891100 100%);
+          background-image: -moz-linear-gradient(top, #ee432e 0%, #c63929 50%,#b51700 50%, #891100 100%);
+          background-image: -o-linear-gradient(top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%);
+          background-image: linear-gradient(top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%);
+          border: 1px solid #951100;
+          padding: 12px 20px 14px 20px;
+          border-radius: 5px;
+          text-decoration: none;
+          color: #fff;
+          font: bold 20px/1 “helvetica neue”, helvetica, arial, sans-serif;
+          text-align: center;
+          box-shadow: 0 1px 3px #333333;
+          text-shadow: 0px -1px 1px rgba(0, 0, 0, 0.8);
+          position:relative;
+          display:inline-block;
+          cursor:pointer;
+          margin-left: 158px;
+        }
+        .btn:active {
+            position: relative;
+            top: 1px;
+        }
+        .btn2:active {
+            position: relative;
+            top: 1px;
+        }
+        
+    </style>
+</head>
+<body>
+    <h2>还有 <span>1</span> 次机会</h2>
+    <div class="choujiang">
+        <div class="dazhuanpan" ></div>
+    <div class="btn">开 转</div>
+    <div class="btn2">投 币</div>
+    <div class="zhen"></div>
+    </div>
+    
+    <script>
+        let arr = ['奖品1','奖品2','奖品3','奖品4','再接再厉','再接再厉','再接再厉','再接再厉','再接再厉','再接再厉']
+        let dazhuanpan = document.getElementsByClassName('dazhuanpan')[0];
+        let btn = document.getElementsByClassName('btn')[0];
+        let btn2 = document.getElementsByClassName('btn2')[0];
+        let data = 0;
+        let limit = 1;
+        //增加抽奖次数
+        function addlimit(){
+            limit +=1;
+            updatalimit()
+        }
+        btn2.addEventListener('click',addlimit);
+        
+        function zhuan(data){
+            let rotate = 0
+            rotate = data%36 == 0?data-5:data
+            dazhuanpan.style.transform = `rotateZ(${rotate}deg)`
+        }
+
+        //更新机会次数
+        function updatalimit(){
+            let span = document.getElementsByTagName('span')[0]
+            span.innerText = limit
+        }
+        updatalimit()
+
+
+        function getdata(){
+            data = Math.floor( Math.random()*360)+360
+        }
+        
+        function showresulte(){
+            let resulte = Math.floor((data-360)/36) 
+            alert( `${arr[resulte]}`)
+            console.log(resulte)
+            dazhuanpan.style.transform = 'rotateZ(0deg)'
+        }
+        
+        function limitfn(EventListener){
+            return function(){
+                if(limit==0){
+                    btn.removeEventListener('click',EventListener)
+                    alert('机会用完了')
+                }else{
+                    EventListener()
+                    limit--
+                    //更新机会次数
+                    updatalimit()
+                } 
+            } 
+        }
+
+        //节流函数
+        function throttle(fun,time){
+            let pre = Date.now()
+            return function (){
+                let now = Date.now()
+                if(now-pre>=time){
+                    fun()
+                    pre = Date.now()
+                }
+            }                                                      
+        }
+
+        //事件
+        function EventListener(){
+            //向后端发起请求
+            getdata()
+            console.log(data)
+            //转动转盘
+            zhuan(data)
+            //显示结果
+            setTimeout(showresulte,1000)
+        }
+
+        //限制抽奖数量
+        let eventfun = limitfn(EventListener);
+
+        //间隔一秒
+        let throttlefun = throttle(eventfun,1000)
+
+        //绑定监听事件
+        function bindevent(){
+            btn.addEventListener('click',throttlefun)
+        }
+        
+        bindevent()
+
+    </script>
+</body>
+</html>
