@@ -91,6 +91,7 @@
         }
         btn2.addEventListener('click',addlimit);
         
+        //转动转盘
         function zhuan(data){
             let rotate = 0
             rotate = data%36 == 0?data-5:data
@@ -102,13 +103,13 @@
             let span = document.getElementsByTagName('span')[0]
             span.innerText = limit
         }
-        updatalimit()
 
-
+        //得到要转的度数
         function getdata(){
             data = Math.floor( Math.random()*360)+360
         }
         
+        //显示抽奖结果
         function showresulte(){
             let resulte = Math.floor((data-360)/36) 
             alert( `${arr[resulte]}`)
@@ -116,6 +117,7 @@
             dazhuanpan.style.transform = 'rotateZ(0deg)'
         }
         
+        //限制抽奖次数
         function limitfn(EventListener){
             return function(){
                 if(limit==0){
